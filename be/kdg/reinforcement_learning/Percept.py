@@ -5,19 +5,3 @@ class Percept:
         self.currentState = currentState
         self.reward = reward
 
-    @property
-    def previousState(self):
-        return self.previousState
-
-    @property
-    def action(self):
-        return self.action
-
-    @property
-    def currentState(self):
-        return self.currentState
-
-    @property
-    def reward(self):
-        return self.reward
-
