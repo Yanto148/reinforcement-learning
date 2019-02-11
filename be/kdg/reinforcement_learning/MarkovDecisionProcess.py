@@ -1,49 +1,67 @@
+import numpy as np
+from gym.wrappers import TimeLimit
 from be.kdg.reinforcement_learning import Percept
-import numpy
 
 
 class MarkovDecisionProcess:
-    def __init__(self, rewards, state_action_frequencies, state_action_state_frequencies, transitionModel):
-        self.rewards = rewards
-        self.state_action_frequencies = state_action_frequencies
-        self.state_action_state_frequencies = state_action_state_frequencies
+
+    def __init__(self, transitionModel, env: TimeLimit):
+        self.n_actions = env.action_space.n
+        self.n_states = env.observation_space.n
+        self.n_sa = self.fill_3_columns()
+        self.n_tsa = self.fill_4_columns()
+        self.rewards = self.fill_4_columns()
         self.transitionModel = transitionModel
+
+    def fill_3_columns(self):
+        arr = np.empty((0, 3), int)
+        for i in range(self.n_states):
+            for j in range(self.n_actions):
+                arr = np.append(arr, [[i, j, 0]], 0)
+        return arr
+
+    def fill_4_columns(self):
+        arr = np.empty((0, 4), int)
+        for i in range(self.n_states):
+            for j in range(self.n_states):
+                for k in range(self.n_actions):
+                    arr = np.append(arr, [[i, j, k, 0]], 0)
+        return arr
 
     def update(self, percept: Percept):
         self.update_rewards(percept)
-        self.update_state_action_frequenties(percept)
-        # self.stateActionFrequencies.append()  # TODO find in array and update frequency or append
-        # self.stateActionStateFrequencies.append()  # TODO same as above
+        self.update_state_action_frequencies(percept)
+        self.update_state_action_state_frequencies(percept)
         # self.transitionModel.append()  # TODO devide the 2 above
 
     def update_rewards(self, percept: Percept):
-        if self.rewards.size == 0 or not self.reward_already_exists(percept):
-            self.rewards = numpy.append(self.rewards,
-                                        [[percept.previousState, percept.action, percept.currentState, percept.reward]],
-                                        0)
+        reward_line = self.get_reward_line(percept)
+        row_index = np.where(np.all(self.rewards == reward_line, axis=1))[0]
+        self.rewards[row_index, 3] = percept.reward
 
-    def update_state_action_frequenties(self, percept: Percept):
+    def update_state_action_frequencies(self, percept: Percept):
         state_action_line = self.get_state_action_line(percept)
-        print(state_action_line)
-        # if (state_action_line.size > 0):
-        #     int(state_action_line[0,2]) + 1
-        # else:
-        #     self.state_action_frequencies = numpy.append(self.state_action_frequencies, [[percept.previousState, percept.action, 1]], 0)
+        row_index = np.where(np.all(self.n_sa == state_action_line, axis=1))[0]
+        self.n_sa[row_index, 2] = int(self.n_sa[row_index, 2]) + 1
 
-    def reward_already_exists(self, percept: Percept) -> bool:
-        check = ((self.rewards[:, 0] == str(percept.previousState)) &
-                 (self.rewards[:, 1] == str(percept.action)) &
-                 (self.rewards[:, 2] == str(percept.currentState)))
-        return self.rewards[check].size > 0
+    def update_state_action_state_frequencies(self, percept: Percept):
+        state_action_state_line = self.get_state_action_state_line(percept)
+        row_index = np.where(np.all(self.n_tsa == state_action_state_line, axis=1))[0]
+        self.n_tsa[row_index, 3] = int(self.n_tsa[row_index, 3]) + 1
+
+    def get_reward_line(self, percept: Percept) -> bool:
+        check = ((self.rewards[:, 0] == percept.previous_state) &
+                 (self.rewards[:, 1] == percept.action) &
+                 (self.rewards[:, 2] == percept.current_state))
+        return self.rewards[check]
 
     def get_state_action_line(self, percept: Percept):
-        check = ((self.state_action_frequencies[:, 0] == str(percept.previousState)) &
-                 (self.state_action_frequencies[:, 1] == str(percept.action)))
-        return numpy.argwhere(self.state_action_frequencies[check])
+        check = ((self.n_sa[:, 0] == percept.previous_state) &
+                 (self.n_sa[:, 1] == percept.action))
+        return self.n_sa[check]
 
-    def state_action_state_already_exists(self, percept: Percept) -> bool:
-        check = ((self.state_action_state_frequencies[:, 0] == str(percept.previousState)) &
-                 (self.state_action_state_frequencies[:, 1] == str(percept.action)) &
-                 (self.state_action_state_frequencies[:, 2] == str(percept.currentState)))
-        return self.state_action_state_frequencies[check] > 0
-
+    def get_state_action_state_line(self, percept: Percept) -> bool:
+        check = ((self.n_tsa[:, 0] == percept.previous_state) &
+                 (self.n_tsa[:, 1] == percept.current_state) &
+                 (self.n_tsa[:, 2] == percept.action))
+        return self.n_tsa[check]
