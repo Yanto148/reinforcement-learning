@@ -1,4 +1,3 @@
-import numpy
 import gym
 
 from unittest import TestCase
@@ -8,10 +7,9 @@ from be.kdg.reinforcement_learning.Percept import Percept
 
 
 class tests(TestCase):
-    transition_model = numpy.empty((0,4))
 
     def test1(self):
-        markovDecisionProcess_table = MarkovDecisionProcess(self.transition_model, gym.make("FrozenLake-v0"))
+        markovDecisionProcess_table = MarkovDecisionProcess(gym.make("FrozenLake-v0"))
         percept = Percept(0, 1, 1, 0)
         percept1 = Percept(0, 1, 1, 1)
         percept2 = Percept(0, 0, 1, 0)
@@ -29,3 +27,5 @@ class tests(TestCase):
         print(markovDecisionProcess_table.n_sa)
         print("===================================")
         print(markovDecisionProcess_table.n_tsa)
+        print("===================================")
+        print(markovDecisionProcess_table.transition_model)
