@@ -34,7 +34,7 @@ class LearningStrategy(ABC):
 
     @property
     def n_states(self):
-        return self.n_states
+        return self._n_states
 
     @property
     def env(self):
@@ -42,7 +42,7 @@ class LearningStrategy(ABC):
 
     @property
     def n_actions(self):
-        return self.n_actions
+        return self._n_actions
 
     @property
     def policy(self):
@@ -50,8 +50,8 @@ class LearningStrategy(ABC):
 
     @property
     def e_min(self):
-        return self.e_min
+        return self._e_min
 
     @property
     def e_max(self):
-        return self.e_max
+        return self._e_max

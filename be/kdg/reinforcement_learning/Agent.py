@@ -24,6 +24,7 @@ class Agent:
                 if (done):
                     episode_done = True
                     t += 1
+                    print("===== Episode " + str(t) + " done =====")
 
     @property
     def learning_strategy(self):
@@ -31,4 +32,4 @@ class Agent:
 
     @property
     def env(self):
-        return self.env
+        return self._env

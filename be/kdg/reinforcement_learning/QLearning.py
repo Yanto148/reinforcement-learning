@@ -25,12 +25,10 @@ class QLearning(LearningStrategy):
 
     def improve(self, percept: Percept, t):
         for i in range(self.env.observation_space.n):
-            a = np.random.choice(np.flatnonzero(self.q[i] == self.q[i].max()))
-            index = 0
-            for k in self.q[i]:
-                if index == a:
-                    self.policy[percept.state, index] = 1 - self.e + (self.e / self.n_actions)
+            a_star = np.random.choice(np.flatnonzero(self.q[i] == self.q[i].max()))
+            for a in range(len(self.policy[i])):
+                if a == a_star:
+                    self.policy[i, a] = 1 - self.e + (self.e / self.n_actions)
                 else:
-                    self.policy[percept.state, index] = self.e / self.n_actions
-                index += 1
+                    self.policy[i, a] = self.e / self.n_actions
         self.e = self.e_min + (self.e_max - self.e_min) * math.exp(-self.la * t)
