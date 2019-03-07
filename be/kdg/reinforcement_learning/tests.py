@@ -3,8 +3,8 @@ from unittest import TestCase
 import gym
 
 from be.kdg.reinforcement_learning.Agent import Agent
-from be.kdg.reinforcement_learning.MarkovDecisionProcess import MarkovDecisionProcess
 from be.kdg.reinforcement_learning.QLearning import QLearning
+
 
 # LEFT = 0
 # DOWN = 1
@@ -24,9 +24,8 @@ class tests(TestCase):
         # )
         env = gym.make("FrozenLake-v0")
         env.reset()
-        markov_dcision_process_table = MarkovDecisionProcess(env)
-        learning_strategy = QLearning(markov_dcision_process_table, 0.1, 0.001, 0.9, 1, 0.05, 1, env)
-        agent = Agent(learning_strategy, env)
+        learning_strategy = QLearning(0.1, 0.001, 0.9, 1, 0.05, 1, env)
+        agent = Agent(learning_strategy, env, 5000)
         agent.learn(5000)
-        print(learning_strategy.policy)
+        print(agent.policy)
 

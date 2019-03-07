@@ -1,9 +1,10 @@
-import numpy as np
+import time
 from abc import ABC, abstractmethod
 
 from gym.wrappers import TimeLimit
 
 from be.kdg.reinforcement_learning import Percept
+from be.kdg.reinforcement_learning.MarkovDecisionProcess import MarkovDecisionProcess
 
 
 class LearningStrategy(ABC):
@@ -13,23 +14,18 @@ class LearningStrategy(ABC):
         self._env = env
         self._n_actions = env.action_space.n
         self._n_states = env.observation_space.n
-        self._policy = self.init_policy()
 
-    def init_policy(self):
-        arr = np.empty((0, 4))
-        for i in range(self.n_states):
-            arr = np.append(arr, [[0.25, 0.25, 0.25, 0.25]], 0)
-        return arr
-
-    def learn(self, percept: Percept, t):
-        self.evaluate(percept)
-        self.improve(percept, t)
+    def learn(self, percept: Percept, t, policy, mdp: MarkovDecisionProcess):
+        self.evaluate(percept, mdp)
+        self.improve(percept, t, policy)
+        # To immediately show kivy, otherwise it's only shown after 200+ episodes on my machine
+        # time.sleep(0.0001)
 
     @abstractmethod
-    def evaluate(self, percept: Percept):
+    def evaluate(self, percept: Percept, mdp: MarkovDecisionProcess):
         pass
 
-    def improve(self, percept: Percept, t):
+    def improve(self, percept: Percept, t, policy):
         pass
 
     @property
@@ -37,16 +33,8 @@ class LearningStrategy(ABC):
         return self._n_states
 
     @property
-    def env(self):
-        return self._env
-
-    @property
     def n_actions(self):
         return self._n_actions
-
-    @property
-    def policy(self):
-        return self._policy
 
     @property
     def e_min(self):
