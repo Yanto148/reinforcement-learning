@@ -14,15 +14,16 @@ class LearningStrategy(ABC):
         self._env = env
         self._n_actions = env.action_space.n
         self._n_states = env.observation_space.n
+        self._mdp = MarkovDecisionProcess(env)
 
-    def learn(self, percept: Percept, t, policy, mdp: MarkovDecisionProcess):
-        self.evaluate(percept, mdp)
+    def learn(self, percept: Percept, t, policy):
+        self.evaluate(percept)
         self.improve(percept, t, policy)
         # To immediately show kivy, otherwise it's only shown after 200+ episodes on my machine
-        # time.sleep(0.0001)
+        time.sleep(0.0001)
 
     @abstractmethod
-    def evaluate(self, percept: Percept, mdp: MarkovDecisionProcess):
+    def evaluate(self, percept: Percept):
         pass
 
     def improve(self, percept: Percept, t, policy):
@@ -43,3 +44,7 @@ class LearningStrategy(ABC):
     @property
     def e_max(self):
         return self._e_max
+
+    @property
+    def mdp(self):
+        return self._mdp

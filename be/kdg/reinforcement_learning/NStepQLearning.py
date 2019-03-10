@@ -3,22 +3,29 @@ import math
 import numpy as np
 from gym.wrappers import TimeLimit
 
+from be.kdg.reinforcement_learning import Percept
 from be.kdg.reinforcement_learning.LearningStrategy import LearningStrategy
-from be.kdg.reinforcement_learning.Percept import Percept
 
 
-class QLearning(LearningStrategy):
-    def __init__(self, alpha, _lambda, gamma, epsilon, e_min, e_max, env: TimeLimit):
+class NStepQLearning(LearningStrategy):
+    def __init__(self, alpha, _lambda, gamma, epsilon, e_min, e_max, n, env: TimeLimit):
         super().__init__(e_min, e_max, env)
         self._alpha = alpha
         self._epsilon = epsilon
         self._gamma = gamma
         self._lambda = _lambda
         self._q = np.zeros((self.n_states, self.n_actions))
+        self._n = n
+        self._p = []
 
-    def evaluate(self, p: Percept):
-        self.mdp.update(p)
-        self._q[p.state, p.action] = self._q[p.state, p.action] + self._alpha * (self.mdp.rewards[p.state, p.action] + self._gamma * np.max(self._q[p.next_state]) - self._q[p.state, p.action])
+    def evaluate(self, percept: Percept):
+        self.mdp.update(percept)
+        self._p.append(percept)
+
+        if len(self._p) >= self._n:
+            for i in range(len(self._p) - self._n, len(self._p)):
+                self._q[self._p[i].state, self._p[i].action] = self._q[self._p[i].state, self._p[i].action] - self._alpha * (self._q[self._p[i].state, self._p[i].action] -
+                                                               (self.mdp.rewards[self._p[i].state, self._p[i].action] + self._gamma * np.max(self._q[self._p[i].next_state])))
 
     def improve(self, percept: Percept, t, policy):
         for i in range(self.n_states):
@@ -29,3 +36,4 @@ class QLearning(LearningStrategy):
                 else:
                     policy[i, a] = self._epsilon / self.n_actions
         self._epsilon = self.e_min + (self.e_max - self.e_min) * math.exp(-self._lambda * t)
+

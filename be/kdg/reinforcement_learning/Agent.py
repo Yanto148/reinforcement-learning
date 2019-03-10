@@ -4,7 +4,6 @@ import numpy as np
 from gym.wrappers import TimeLimit
 
 from be.kdg.reinforcement_learning.LearningStrategy import LearningStrategy
-from be.kdg.reinforcement_learning.MarkovDecisionProcess import MarkovDecisionProcess
 from be.kdg.reinforcement_learning.Percept import Percept
 
 
@@ -16,7 +15,6 @@ class Agent(Thread):
         self._n_episodes = n_episodes
         self._n_states = env.observation_space.n
         self._policy = self.init_policy()
-        self._mdp = MarkovDecisionProcess(env)
 
     def run(self) -> None:
         self.learn(self._n_episodes)
@@ -36,7 +34,7 @@ class Agent(Thread):
                 action = np.random.choice([0,1,2,3], p=self._policy[state])
                 new_state, reward, done, info = self._env.step(action)
                 percept = Percept(state, action, new_state, reward, done)
-                self._learning_strategy.learn(percept, t, self._policy, self._mdp)
+                self._learning_strategy.learn(percept, t, self._policy)
                 state = new_state
                 if done:
                     episode_done = True

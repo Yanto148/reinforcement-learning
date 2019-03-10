@@ -36,3 +36,7 @@ class MarkovDecisionProcess:
     @property
     def rewards(self):
         return self._rewards
+
+    @property
+    def transition_model(self):
+        return self._transition_model

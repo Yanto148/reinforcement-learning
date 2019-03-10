@@ -2,6 +2,10 @@ import kivy
 import gym
 from gym import register
 
+from be.kdg.reinforcement_learning.MonteCarlo import MonteCarlo
+from be.kdg.reinforcement_learning.NStepQLearning import NStepQLearning
+from be.kdg.reinforcement_learning.ValueIteration import ValueIteration
+
 kivy.require('1.10.1')
 
 from kivy.app import App
@@ -55,15 +59,18 @@ class MyApp(App):
 
 if __name__ == '__main__':
     # To make environment non slippery
-    # register(
-    #     id='FrozenLakeNotSlippery-v0',
-    #     entry_point='gym.envs.toy_text:FrozenLakeEnv',
-    #     kwargs={'map_name': '4x4', 'is_slippery': False},
-    #     max_episode_steps=100,
-    #     reward_threshold=0.78,  # optimum = .8196
-    # )
+    register(
+        id='FrozenLakeNotSlippery-v0',
+        entry_point='gym.envs.toy_text:FrozenLakeEnv',
+        kwargs={'map_name': '4x4', 'is_slippery': False},
+        max_episode_steps=100,
+        reward_threshold=0.78,  # optimum = .8196
+    )
     env = gym.make("FrozenLake-v0")
-    strategy = QLearning(0.1, 0.001, 0.9, 1, 0.05, 1, env)
+    # strategy = QLearning(0.1, 0.001, 0.9, 1, 0.05, 1, env)
+    # strategy = NStepQLearning(0.1, 0.001, 0.9, 1, 0.05, 1, 5, env)
+    # strategy = MonteCarlo(0.1, 0.001, 0.9, 1, 0.05, 1, env)
+    strategy = ValueIteration(0.1, 0.001, 0.9, 1, 0.05, 1, 0.5, env)
     agent = Agent(strategy, env, 20000)
     # start Agent's thread
     agent.start()
