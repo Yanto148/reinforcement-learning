@@ -34,9 +34,9 @@ class MarkovDecisionProcess:
             self._transition_model[t, percept.state, percept.action] = p
 
     @property
-    def rewards(self):
+    def rewards(self) -> np.ndarray:
         return self._rewards
 
     @property
-    def transition_model(self):
+    def transition_model(self) -> np.ndarray:
         return self._transition_model

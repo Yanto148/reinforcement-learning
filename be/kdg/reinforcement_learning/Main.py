@@ -70,7 +70,7 @@ if __name__ == '__main__':
     # strategy = QLearning(0.1, 0.001, 0.9, 1, 0.05, 1, env)
     # strategy = NStepQLearning(0.1, 0.001, 0.9, 1, 0.05, 1, 5, env)
     # strategy = MonteCarlo(0.1, 0.001, 0.9, 1, 0.05, 1, env)
-    strategy = ValueIteration(0.1, 0.001, 0.9, 1, 0.05, 1, 0.5, env)
+    strategy = ValueIteration(0.1, 0.001, 0.9, 1, 0.05, 1, 0.85, env)
     agent = Agent(strategy, env, 20000)
     # start Agent's thread
     agent.start()
