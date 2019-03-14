@@ -16,7 +16,7 @@ class MonteCarlo(TemporalDifferenceLearning):
         self.mdp.update(percept)
         self._p.append(percept)
 
-        if percept.reward == 1:
+        if percept.done:
             self._n = len(self._p) - self._index
             self._index = len(self._p)
 
