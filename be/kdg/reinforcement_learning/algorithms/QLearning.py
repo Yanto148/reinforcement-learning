@@ -1,13 +1,13 @@
 import numpy as np
-from gym.wrappers import TimeLimit
 
-from be.kdg.reinforcement_learning.Percept import Percept
-from be.kdg.reinforcement_learning.TemporalDifferenceLearning import TemporalDifferenceLearning
+from be.kdg.reinforcement_learning.domain import Environment
+from be.kdg.reinforcement_learning.domain.Percept import Percept
+from be.kdg.reinforcement_learning.algorithms.contracts.TemporalDifferenceLearning import TemporalDifferenceLearning
 
 
 class QLearning(TemporalDifferenceLearning):
 
-    def __init__(self, alpha: float, _lambda: float, gamma: float, epsilon: float, e_min: float, e_max: float, env: TimeLimit):
+    def __init__(self, alpha: float, _lambda: float, gamma: float, epsilon: float, e_min: float, e_max: float, env: Environment):
         super().__init__(alpha, _lambda, gamma, epsilon, e_min, e_max, env)
 
     def evaluate(self, p: Percept):

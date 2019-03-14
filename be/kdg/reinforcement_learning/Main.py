@@ -2,9 +2,11 @@ import kivy
 import gym
 from gym import register
 
-from be.kdg.reinforcement_learning.MonteCarlo import MonteCarlo
-from be.kdg.reinforcement_learning.NStepQLearning import NStepQLearning
-from be.kdg.reinforcement_learning.ValueIteration import ValueIteration
+from be.kdg.reinforcement_learning.algorithms.MonteCarlo import MonteCarlo
+from be.kdg.reinforcement_learning.algorithms.NStepQLearning import NStepQLearning
+from be.kdg.reinforcement_learning.algorithms.QLearning import QLearning
+from be.kdg.reinforcement_learning.domain.Environment import Environment
+from be.kdg.reinforcement_learning.algorithms.ValueIteration import ValueIteration
 
 kivy.require('1.10.1')
 
@@ -13,17 +15,16 @@ from kivy.graphics.context import Clock
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 
-from be.kdg.reinforcement_learning.Agent import Agent
-from be.kdg.reinforcement_learning.QLearning import QLearning
+from be.kdg.reinforcement_learning.domain.Agent import Agent
 
 
 class FrozenLakeWidget(GridLayout):
 
-    def __init__(self, agent: Agent, **kwargs):
+    def __init__(self, env: Environment, agent: Agent, **kwargs):
         super(FrozenLakeWidget, self).__init__(**kwargs)
-        # self._disabled_count = 0
         self.agent = agent
-        policy = self.agent.visualize()
+        self.environment = env
+        policy = env.visualize(agent.learning_strategy)
         self.cols = policy.shape[1]
         for action in policy.reshape(1, -1).flatten():
             self.add_widget(
@@ -33,7 +34,7 @@ class FrozenLakeWidget(GridLayout):
             )
 
     def update(self):
-        policy = self.agent.visualize()
+        policy = self.environment.visualize(self.agent.learning_strategy)
         self.clear_widgets()
         for action in policy.reshape(1, -1).flatten():
             self.add_widget(
@@ -44,10 +45,11 @@ class FrozenLakeWidget(GridLayout):
 
 class MyApp(App):
 
-    def __init__(self, agent: Agent):
+    def __init__(self, env: Environment, agent: Agent):
         super().__init__()
         self.agent = agent
-        self.frozen_lake = FrozenLakeWidget(self.agent)
+        self.environtment = env
+        self.frozen_lake = FrozenLakeWidget(self.environtment, self.agent)
         Clock.schedule_interval(self.update, 1 / 30)
 
     def build(self):
@@ -67,11 +69,12 @@ if __name__ == '__main__':
         reward_threshold=0.78,  # optimum = .8196
     )
     env = gym.make("FrozenLake-v0")
-    # strategy = QLearning(0.1, 0.001, 0.9, 1, 0.05, 1, env)
-    # strategy = NStepQLearning(0.1, 0.001, 0.9, 1, 0.05, 1, 5, env)
-    # strategy = MonteCarlo(0.1, 0.001, 0.9, 1, 0.05, 1, env)
-    strategy = ValueIteration(0.1, 0.001, 0.9, 1, 0.05, 1, 0.85, env)
+    environment = Environment(env)
+    strategy = QLearning(0.1, 0.001, 0.9, 1, 0.01, 1, environment)
+    # strategy = NStepQLearning(0.1, 0.001, 0.9, 1, 0.01, 1, 5, environment)
+    # strategy = MonteCarlo(0.1, 0.001, 0.9, 1, 0.01, 1, environment)
+    # strategy = ValueIteration(0.1, 0.001, 0.9, 1, 0.01, 1, 0.85, environment)
     agent = Agent(strategy, env, 20000)
     # start Agent's thread
     agent.start()
-    MyApp(agent).run()
+    MyApp(environment, agent).run()

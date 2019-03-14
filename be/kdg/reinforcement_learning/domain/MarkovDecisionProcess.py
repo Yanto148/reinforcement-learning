@@ -1,18 +1,16 @@
 import numpy as np
 
-from gym.wrappers import TimeLimit
-
-from be.kdg.reinforcement_learning.Percept import Percept
+from be.kdg.reinforcement_learning.domain import Environment
+from be.kdg.reinforcement_learning.domain.Percept import Percept
 
 
 class MarkovDecisionProcess:
-    def __init__(self, env: TimeLimit):
-        self._n_actions = env.action_space.n
-        self._n_states = env.observation_space.n
-        self._n_sa = np.zeros((self._n_states, self._n_actions))
-        self._n_tsa = np.zeros((self._n_states, self._n_states, self._n_actions))
-        self._rewards = np.zeros((self._n_states, self._n_actions))
-        self._transition_model = np.zeros((self._n_states, self._n_states, self._n_actions))
+    def __init__(self, env: Environment):
+        self._env = env
+        self._n_sa = np.zeros((env.n_states, env.n_actions))
+        self._n_tsa = np.zeros((env.n_states, env.n_states, env.n_actions))
+        self._rewards = np.zeros((env.n_states, env.n_actions))
+        self._transition_model = np.zeros((env.n_states, env.n_states, env.n_actions))
         self._n = 0
 
     def update(self, percept: Percept):
@@ -29,7 +27,7 @@ class MarkovDecisionProcess:
         self._n_tsa[p.next_state, p.state, p.action] += 1
 
     def update_transition_model(self, percept: Percept):
-        for t in range(self._n_states):
+        for t in range(self._env.n_states):
             p = self._n_tsa[t, percept.state, percept.action] / self._n_sa[percept.state, percept.action]
             self._transition_model[t, percept.state, percept.action] = p
 
