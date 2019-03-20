@@ -8,7 +8,8 @@ from be.kdg.reinforcement_learning.algorithms.contracts.TemporalDifferenceLearni
 class QLearning(TemporalDifferenceLearning):
 
     def __init__(self, alpha: float, _lambda: float, gamma: float, epsilon: float, e_min: float, e_max: float, env: Environment):
-        super().__init__(alpha, _lambda, gamma, epsilon, e_min, e_max, env)
+        super().__init__(_lambda, gamma, epsilon, e_min, e_max, env)
+        self._alpha = alpha
 
     def evaluate(self, p: Percept):
         self.mdp.update(p)

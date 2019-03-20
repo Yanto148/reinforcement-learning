@@ -10,7 +10,8 @@ from be.kdg.reinforcement_learning.domain.MarkovDecisionProcess import MarkovDec
 class ValueIteration(DynamicProgrammingLearning):
 
     def __init__(self, alpha: float, _lambda: float, gamma: float, epsilon: float, e_min: float, e_max: float, xi: float, env: Environment):
-        super().__init__(alpha, _lambda, gamma, epsilon, e_min, e_max, xi, env)
+        super().__init__(_lambda, gamma, epsilon, e_min, e_max, xi, env)
+        self._alpha = alpha
 
     def evaluate(self, percept: Percept):
         self.mdp.update(percept)

@@ -70,9 +70,9 @@ if __name__ == '__main__':
     )
     env = gym.make("FrozenLake-v0")
     environment = Environment(env)
-    strategy = QLearning(0.1, 0.001, 0.9, 1, 0.01, 1, environment)
+    # strategy = QLearning(0.1, 0.001, 0.9, 1, 0.01, 1, environment)
     # strategy = NStepQLearning(0.1, 0.001, 0.9, 1, 0.01, 1, 5, environment)
-    # strategy = MonteCarlo(0.1, 0.001, 0.9, 1, 0.01, 1, environment)
+    strategy = MonteCarlo(0.1, 0.001, 0.9, 1, 0.01, 1, environment)
     # strategy = ValueIteration(0.1, 0.001, 0.9, 1, 0.01, 1, 0.85, environment)
     agent = Agent(strategy, env, 20000)
     # start Agent's thread

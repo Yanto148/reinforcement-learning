@@ -30,9 +30,9 @@ class Agent(Thread):
                 self._learning_strategy.learn(percept, t)
                 state = new_state
                 if done:
-                    self._reward_list.append(percept.reward)
                     episode_done = True
                     t += 1
+                    self._reward_list.append(percept.reward)
                     if t % 100 == 0:
                         average = np.mean(self._reward_list)
                         print("Episode: {} - Reward average: {}".format(t, average, self._learning_strategy))

@@ -7,7 +7,8 @@ from be.kdg.reinforcement_learning.algorithms.contracts.TemporalDifferenceLearni
 
 class MonteCarlo(TemporalDifferenceLearning):
     def __init__(self, alpha: float, _lambda: float, gamma: float, epsilon: float, e_min: float, e_max: float, env: Environment):
-        super().__init__(alpha, _lambda, gamma, epsilon, e_min, e_max, env)
+        super().__init__(_lambda, gamma, epsilon, e_min, e_max, env)
+        self._alpha = alpha
         self._index = 0
         self._p = []
         self._n = 0
@@ -22,7 +23,8 @@ class MonteCarlo(TemporalDifferenceLearning):
 
         if self._n > 0:
             for i in range(len(self._p) - 1, len(self._p) - 1 - self._n, -1):
-                self._q[self._p[i].state, self._p[i].action] = self._q[self._p[i].state, self._p[i].action] - self._alpha * (self._q[self._p[i].state, self._p[i].action] -
-                                                (self.mdp.rewards[self._p[i].state, self._p[i].action] + self._gamma * np.max(self._q[self._p[i].next_state])))
+                p = self._p[i]
+                self._q[p.state, p.action] = self._q[p.state, p.action] - self._alpha * (self._q[p.state, p.action] -
+                                                (self.mdp.rewards[p.state, p.action] + self._gamma * np.max(self._q[p.next_state])))
 
 

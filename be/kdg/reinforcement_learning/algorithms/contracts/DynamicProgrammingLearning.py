@@ -9,9 +9,8 @@ from be.kdg.reinforcement_learning.algorithms.contracts.LearningStrategy import 
 
 class DynamicProgrammingLearning(LearningStrategy, ABC):
 
-    def __init__(self, alpha: float, _lambda: float, gamma: float, epsilon: float, e_min: float, e_max: float, xi: float, env: Environment):
+    def __init__(self, _lambda: float, gamma: float, epsilon: float, e_min: float, e_max: float, xi: float, env: Environment):
         super().__init__(e_min, e_max, env)
-        self._alpha = alpha
         self._epsilon = epsilon
         self._gamma = gamma
         self._lambda = _lambda

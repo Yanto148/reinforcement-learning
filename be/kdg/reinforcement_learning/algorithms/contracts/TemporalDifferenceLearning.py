@@ -9,9 +9,8 @@ from be.kdg.reinforcement_learning.algorithms.contracts.LearningStrategy import 
 
 class TemporalDifferenceLearning(LearningStrategy, ABC):
 
-    def __init__(self, alpha, _lambda, gamma, epsilon, e_min, e_max, env: Environment):
+    def __init__(self, _lambda, gamma, epsilon, e_min, e_max, env: Environment):
         super().__init__(e_min, e_max, env)
-        self._alpha = alpha
         self._epsilon = epsilon
         self._gamma = gamma
         self._lambda = _lambda
